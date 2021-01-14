@@ -43,6 +43,6 @@ connectDB().then(() => {
         console.log('*'.repeat(90))
     });
 
-    httpServer.listen(config.port, console.log(`Listening on port ${config.port}! Now its up to you...`));
-    httpsServer.listen(4444, console.log(`Listening on port ${4444}! Now its up to you...`));
+    httpServer.listen(80, console.log(`Listening on port ${config.port}! Now its up to you...`));
+    httpsServer.listen(80 console.log(`Listening on port ${4444}! Now its up to you...`));
 })
