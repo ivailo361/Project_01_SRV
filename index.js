@@ -43,7 +43,7 @@ connectDB().then(() => {
         console.log('*'.repeat(90))
     });
 
-    app.listen(config.port, console.log(`Listening on port ${config.port}! Now its up to you...`));
+    app.listen(process.env.PORT || 3333, () => console.log(`Listening on port ${config.port}! Now its up to you...`));
 
     // httpServer.listen(3333, console.log(`Listening on port ${config.port}! Now its up to you...`));
     // httpsServer.listen(4444, console.log(`Listening on port ${4444}! Now its up to you...`));
