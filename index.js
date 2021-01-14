@@ -1,18 +1,18 @@
 const env = process.env.NODE_ENV || 'development';
 const config = require('./config/config')[env];
 
-const fs = require('fs');
-const http = require('http');
-const https = require('https');
-const privateKey  = fs.readFileSync(__dirname + '/sslcert/key.pem', 'utf8');
-const certificate = fs.readFileSync(__dirname + '/sslcert/cert.pem', 'utf8');
-const credentials = {key: privateKey, cert: certificate};
+// const fs = require('fs');
+// const http = require('http');
+// const https = require('https');
+// const privateKey  = fs.readFileSync(__dirname + '/sslcert/key.pem', 'utf8');
+// const certificate = fs.readFileSync(__dirname + '/sslcert/cert.pem', 'utf8');
+// const credentials = {key: privateKey, cert: certificate};
+// const httpServer = http.createServer(app);
+// const httpsServer = https.createServer(credentials, app);
 
 const express = require('express');
 const app = express()
 const cors = require('cors');
-const httpServer = http.createServer(app);
-const httpsServer = https.createServer(credentials, app);
 
 const connectDB = require('./config/connectDB')
 const stockRouter = require('./src/stock/routerStock');
@@ -43,6 +43,8 @@ connectDB().then(() => {
         console.log('*'.repeat(90))
     });
 
-    httpServer.listen(80, console.log(`Listening on port ${config.port}! Now its up to you...`));
-    httpsServer.listen(80, console.log(`Listening on port ${4444}! Now its up to you...`));
+    app.listen(config.port, console.log(`Listening on port ${config.port}! Now its up to you...`));
+
+    // httpServer.listen(3333, console.log(`Listening on port ${config.port}! Now its up to you...`));
+    // httpsServer.listen(4444, console.log(`Listening on port ${4444}! Now its up to you...`));
 })

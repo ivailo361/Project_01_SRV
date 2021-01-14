@@ -1,7 +1,10 @@
 {
   "name": "expresssrv",
   "version": "1.0.0",
-  "description": "",
+  "description": "A small project for creating a server configurator which can help me to select the right component for the chosen server on stock",
+  "engines": {
+    "node": "15.x"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
