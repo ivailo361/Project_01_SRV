@@ -128,6 +128,20 @@ class MongoDB {
         }
     }
 
+    async insertUser(collection, userData) {
+        const { connect, db } = await connectDB()
+        const { email } = userData
+        let result = await db.collection(collection).findOne({ email: email })
+        if (result === null) {
+            let res = await db.collection(collection).insertOne(userData)
+            connect.close()
+            return res
+        } else {
+            connect.close()
+            throw new Error('The user has already existed')
+        }
+    }
+
     // async getUser(collectionName, param) {
     //     const db = await connectDB();
     //     return db.collection(collectionName).findOne(param)

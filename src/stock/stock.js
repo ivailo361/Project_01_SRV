@@ -9,8 +9,8 @@ const db = new MongoDB();
 async function getInitialData(req, res, next) {
     try {
         console.log('I am here')
-        let getData = await Promise.all([db.getData('servers'), db.getData('types')])
-        let result = [ ...getData[0], ...getData[1]]
+        const getData = await Promise.all([db.getData('servers'), db.getData('types')])
+        const result = [...getData[0], ...getData[1]]
         if (result.length === 0) {
             res.status(404).json('Sorry, we cannot find that!')
         }
@@ -18,11 +18,57 @@ async function getInitialData(req, res, next) {
     }
     catch (e) {
         res.status(400).json('No connection with DB')
-        next(e)
     }
 }
 
-let old  = {
+async function register(req, res, next) {
+    try {
+        const { email, password, } = req.body;
+        const salt = config.db_saltRounds
+        const hashed = await bcrypt.hash(password, salt)
+        const result = await db.insertUser('users', { email, password: hashed })
+        if (result.insertedCount === 0) {
+            res.status(404).json('the user was not created please try again later')
+            return
+        }
+        const response = {insertedCount: 1, user: email}
+        res.status(200).json(response)
+    }
+    catch (e) {
+        res.status(400).json(e.message)
+    }
+}
+
+async function login(req, res,) {
+    try {
+        console.log(req.body)
+        const { email, password } = req.body;
+        const user = await db.getData('users', { email })
+        const { password: pass } = user[0]
+
+        if (user.length === 0) {
+            res.status(401).json('Invalid user')
+            return
+        }
+        const isMatched = await bcrypt.compare(password, pass ? pass : '')
+        if (!isMatched) {
+            res.status(403).json('Invalid password')
+            return
+        }
+        const token = generateToken({ email }, { expiresIn: '200m' })
+        const response = {login:'ok', user: email, token}
+    
+        res.status(200).json(response)
+
+    }
+    catch (e) {
+        res.status(400).json('The user was not found')
+    }
+}
+
+
+
+let old = {
     get: async (req, res, next) => {
 
     },
@@ -77,5 +123,7 @@ let old  = {
 }
 
 module.exports = {
-    getInitialData
+    getInitialData,
+    register,
+    login,
 }
