@@ -1,9 +1,10 @@
 const stock = require('./stock');
 const router = require('express').Router();
+const { authUser } = require('../../models/auth')
 // const validate= require('../../models/validator');
 
 
-router.get('/', stock.getInitialData);
+router.get('/', authUser, stock.getInitialData);
 
 router.post('/register', stock.register);
 

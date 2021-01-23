@@ -1,7 +1,7 @@
 const env = process.env.NODE_ENV || 'development';
 const config = require('../../config/config')[env];
 const bcrypt = require('bcrypt');
-const { generateToken, decodeToken } = require('../../models/auth')
+const { generateToken } = require('../../models/auth')
 
 const MongoDB = require("../../models/mongo");
 const db = new MongoDB();
@@ -26,7 +26,7 @@ async function register(req, res, next) {
         const { email, password, } = req.body;
         const salt = config.db_saltRounds
         const hashed = await bcrypt.hash(password, salt)
-        const result = await db.insertUser('users', { email, password: hashed })
+        const result = await db.insertUser('users', { email, password: hashed, type: 'guest' })
         if (result.insertedCount === 0) {
             res.status(404).json('the user was not created please try again later')
             return
@@ -44,7 +44,7 @@ async function login(req, res,) {
         console.log(req.body)
         const { email, password } = req.body;
         const user = await db.getData('users', { email })
-        const { password: pass } = user[0]
+        const { password: pass, type } = user[0]
 
         if (user.length === 0) {
             res.status(401).json('Invalid user')
@@ -56,7 +56,7 @@ async function login(req, res,) {
             return
         }
         const token = generateToken({ email }, { expiresIn: '200m' })
-        const response = {login:'ok', user: email, token}
+        const response = {login:'ok', user: email, token, type}
     
         res.status(200).json(response)
 

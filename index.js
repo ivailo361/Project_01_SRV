@@ -21,7 +21,7 @@ const editRouter = require('./src/edit/routerEdit');
 connectDB().then(() => {
     console.log('connected')
 
-    app.use(cors());
+    app.use(cors({origin: "http://localhost:3000"}));
     // app.use((req, res, next) => {
     //     res.header('Access-Control-Allow-Origin', '*');
     //     next();
@@ -39,7 +39,7 @@ connectDB().then(() => {
 
     app.use(function (err, req, res, next) {
         console.error(err.message);
-        res.status(500).send(err.message);
+        res.status(500).json(err.message);
         console.log('*'.repeat(90))
     });
 

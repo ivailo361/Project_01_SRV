@@ -6,7 +6,6 @@ const db = new MongoDB();
 async function getComponents(req, res, next) {
     try {
         let result = await db.getData('components');
-        console.log('iztriime')
         res.status(200).json(result)
     }
     catch(e) {

@@ -1,17 +1,26 @@
 const jwt = require('jsonwebtoken');
 const env = process.env.NODE_ENV || 'development';
 const config = require('../config/config.js')[env];
+const MongoDB = require("./mongo");
+const db = new MongoDB();
 
-function authUser(req, res, next) {
+async function authUser(req, res, next) {
     try {
-        let token = req.headers.auth
-        if (!token) {
-            return next()
+        const { authorization } = req.headers
+        if (authorization === undefined || authorization === 'null') {
+            throw new Error('You must be login in order to get the info')
         }
+        const { token, type } = JSON.parse(authorization) 
         const decodedToken = jwt.verify(token, config.db_secret);
         const { email } = decodedToken
-        req.email = { email }
-        next()
+        const user = await db.getData('users', { email, type })
+        if (user.length === 1) {
+            req.type = type
+            next()
+        } else {
+            throw new Error('You do not have rights to do this!')
+        }
+        
     }
     catch (e) {
         // req.respond = 'Your session has expired please login again'
@@ -20,6 +29,13 @@ function authUser(req, res, next) {
         next(e)
         // res.render('loginPage', { respond })
     }
+}
+
+function checkAdminType(req, res, next) {
+    if (req.type !== 'admin') {
+        throw new Error('You do not have enough rights to proceed')
+    }
+    next()
 }
 
 function generateToken(payload, options) {
@@ -34,6 +50,6 @@ function decodeToken(token) {
 
 module.exports = {
     authUser,
+    checkAdminType,
     generateToken,
-    decodeToken
 }

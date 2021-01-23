@@ -6,6 +6,9 @@ const paramsCooking = {
     email: (name) => {
         return { email: name }
     },
+    type: (name) => {
+        return { type: name}
+    },
     authorId: (authorId) => {
         return { _id: new ObjectId(authorId) }
     },
@@ -38,7 +41,7 @@ class MongoDB {
         if (results.length >= 1) {
             return results;
         } else {
-            throw new Error('Data with such parameters was not found!')
+            throw new Error('You do not have rights to do that')
         }
     }
 
