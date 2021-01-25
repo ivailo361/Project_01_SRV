@@ -9,6 +9,7 @@ const config = require('./config/config')[env];
 // const credentials = {key: privateKey, cert: certificate};
 // const httpServer = http.createServer(app);
 // const httpsServer = https.createServer(credentials, app);
+console.log('IVO')
 
 const express = require('express');
 const app = express()
