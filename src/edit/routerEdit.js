@@ -6,7 +6,7 @@ const { authUser } = require('../../models/auth')
 
 router.get('/', authUser, edit.getComponents)
 
-router.post('/', authUser, readFile, edit.uploadComponents)
+router.post('/', readFile, edit.uploadComponents)
 
 router.put('/component', authUser, edit.updateSingleComponent)
 
