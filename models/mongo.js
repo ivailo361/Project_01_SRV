@@ -108,7 +108,7 @@ class MongoDB {
     async updateModels(id, newModel) {
         const { connect, db } = await connectDB()
         // const o_id = new ObjectId(id);
-        let result = await db.collection('servers').findOne({ models: { $elemMatch: { $eq: newModel } } })
+        let result = await db.collection('servers').findOne({ sap: id, models: { $elemMatch: { $eq: newModel } } })
         if (result === null) {
             let res = await db.collection('servers').updateOne({ sap: id }, { $push: { models: newModel } })
             connect.close()
