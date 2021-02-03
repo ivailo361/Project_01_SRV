@@ -6,6 +6,8 @@ const { authUser } = require('../../models/auth')
 
 router.get('/', authUser, stock.getInitialData);
 
+router.delete('/delete', stock.deleteComponents)
+
 router.post('/register', stock.register);
 
 router.post('/login', stock.login);

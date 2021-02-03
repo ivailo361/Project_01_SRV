@@ -28,8 +28,8 @@ async function uploadComponents(req, res, next) {
                 D: 'description',
                 E: 'price',
                 F: 'qty',
-                G: 'type',
-                H: 'compatibleSrv'
+                // G: 'type',
+                // H: 'compatibleSrv'
             },
             header: {
                 rows: 1
@@ -70,6 +70,9 @@ async function updateSingleComponent(req, res, next) {
 async function updateTypes(req, res, next) {
     try {
         const { type } = req.body
+        if (!type) {
+            throw new Error('empty type')
+        }
         let result = await db.updateTypes(type)
         console.log(result.ops[0])
         let response = {insertedCount: 1, type: type}
@@ -95,6 +98,9 @@ async function deleteType(req, res, next) {
 async function updateModels(req, res, next) {
     try {
         const { manufacturer, model } = req.body
+        if (!model) {
+            throw new Error('empty model')
+        }
         let result = await db.updateModels(manufacturer, model)
         console.log(result)
         let response = {insertedCount: 1, type: model}

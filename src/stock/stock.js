@@ -21,6 +21,20 @@ async function getInitialData(req, res, next) {
     }
 }
 
+async function deleteComponents(req, res, next) {
+    try {
+        let body = req.body;
+
+        console.log(body)
+        let result = await db.deleteComponents('components', body)
+        let response = {deletedComponents: result}
+        res.status(200).json(response)
+    }
+    catch (e) {
+        res.status(400).json('The delete operation can\'t be completed')
+    }
+}
+
 async function register(req, res, next) {
     try {
         const { email, password, } = req.body;
@@ -124,6 +138,7 @@ let old = {
 
 module.exports = {
     getInitialData,
+    deleteComponents,
     register,
     login,
 }

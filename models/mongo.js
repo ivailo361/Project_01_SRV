@@ -145,6 +145,20 @@ class MongoDB {
         }
     }
 
+    async deleteComponents(collection, compList) {
+        const { connect, db } = await connectDB()
+        const listForDel = compList.map(x => db.collection(collection).deleteOne({ sapNum: x }))
+        let result = await Promise.all(listForDel)
+        let count = result.reduce((acc, v) => {
+            if(v.deletedCount === 1) {
+                acc++
+                return acc
+            }
+            return acc
+        }, 0)
+        connect.close()
+        return count
+    }
     // async getUser(collectionName, param) {
     //     const db = await connectDB();
     //     return db.collection(collectionName).findOne(param)
