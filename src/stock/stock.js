@@ -2,6 +2,7 @@ const env = process.env.NODE_ENV || 'development';
 const config = require('../../config/config')[env];
 const bcrypt = require('bcrypt');
 const { generateToken } = require('../../models/auth')
+const UserExceptionError = require('../../models/userException')
 
 const MongoDB = require("../../models/mongo");
 const db = new MongoDB();
@@ -12,12 +13,12 @@ async function getInitialData(req, res, next) {
         const getData = await Promise.all([db.getData('servers'), db.getData('types')])
         const result = [...getData[0], ...getData[1]]
         if (result.length === 0) {
-            res.status(404).json('Sorry, we cannot find that!')
+            throw new UserExceptionError(404, 'Sorry, we cannot find that!')
         }
         res.status(200).json(getData)
     }
     catch (e) {
-        res.status(400).json('No connection with DB')
+        next(e)
     }
 }
 
@@ -31,7 +32,9 @@ async function deleteComponents(req, res, next) {
         res.status(200).json(response)
     }
     catch (e) {
-        res.status(400).json('The delete operation can\'t be completed')
+        let error = new UserExceptionError(400, 'The delete operation can\'t be completed')
+        // res.status(400).json('The delete operation can\'t be completed')
+        next(error)
     }
 }
 
@@ -42,18 +45,18 @@ async function register(req, res, next) {
         const hashed = await bcrypt.hash(password, salt)
         const result = await db.insertUser('users', { email, password: hashed, type: 'guest' })
         if (result.insertedCount === 0) {
-            res.status(404).json('the user was not created please try again later')
-            return
+            throw new UserExceptionError(404, 'The user has already existed')
+   
         }
         const response = {insertedCount: 1, user: email}
         res.status(200).json(response)
     }
     catch (e) {
-        res.status(400).json(e.message)
+        next(e)
     }
 }
 
-async function login(req, res,) {
+async function login(req, res, next) {
     try {
         console.log(req.body)
         const { email, password } = req.body;
@@ -61,13 +64,11 @@ async function login(req, res,) {
         const { password: pass, type } = user[0]
 
         if (user.length === 0) {
-            res.status(401).json('Invalid user')
-            return
+            throw new UserExceptionError(401, 'Invalid user')
         }
         const isMatched = await bcrypt.compare(password, pass ? pass : '')
         if (!isMatched) {
-            res.status(403).json('Invalid password')
-            return
+            throw new UserExceptionError(401, 'Invalid password')
         }
         const token = generateToken({ email }, { expiresIn: '200m' })
         const response = {login:'ok', user: email, token, type}
@@ -76,65 +77,10 @@ async function login(req, res,) {
 
     }
     catch (e) {
-        res.status(400).json('The user was not found')
+        next(e)
     }
 }
 
-
-
-let old = {
-    get: async (req, res, next) => {
-
-    },
-
-    post: {
-        register: async (req, res, next) => {
-            try {
-                console.log(req.body)
-                // if (req.body) {
-                //     throw new Error("it is a bug")
-                // }
-                const { email, password, image } = req.body;
-                let salt = config.db_saltRounds
-                let hashed = await bcrypt.hash(password, salt)
-                let result = await db.insertUser('users', { email, password: hashed, image })
-                console.log(result.insertedCount)
-                if (result.insertedCount === 0) {
-                    res.status(406).json('Not registered')
-                }
-                res.status(200).json(result)
-            }
-            catch (e) {
-                next(e)
-            }
-        },
-        login: async (req, res, next) => {
-            try {
-
-                console.log(req.body)
-                const { email, password } = req.body;
-                const user = await db.getDataAll('users', { email })
-                if (user.length === 0) {
-                    res.status(401).json('Invalid user')
-                    return
-                }
-                const isMatched = await bcrypt.compare(password, user[0].password ? user[0].password : '')
-                if (!isMatched) {
-                    res.status(403).json('Invalid password')
-                    return
-                }
-                const token = generateToken({ email }, { expiresIn: '200m' })
-
-                const authorId = user[0]._id
-                const authorEmail = user[0].email
-                res.status(200).json({ authorId, authorEmail, token })
-            }
-            catch (e) {
-                next(e)
-            }
-        },
-    },
-}
 
 module.exports = {
     getInitialData,

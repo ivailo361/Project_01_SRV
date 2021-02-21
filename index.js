@@ -1,5 +1,6 @@
 const env = process.env.NODE_ENV || 'development';
 const config = require('./config/config')[env];
+const errorLog = require('./models/errorHandler')
 
 // const fs = require('fs');
 // const http = require('http');
@@ -40,7 +41,9 @@ connectDB().then(() => {
 
     app.use(function (err, req, res, next) {
         console.error(err.message);
-        res.status(500).json(err.message);
+        const { code, message } = err
+        errorLog(message)
+        res.status(code || 409).json(message);
         console.log('*'.repeat(90))
     });
 

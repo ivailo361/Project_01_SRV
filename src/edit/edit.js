@@ -2,6 +2,7 @@ const path = require('path');
 const excelToJson = require('convert-excel-to-json');
 const MongoDB = require("../../models/mongo");
 const db = new MongoDB();
+const UserExceptionError = require('../../models/userException')
 
 async function getComponents(req, res, next) {
     try {
@@ -9,7 +10,8 @@ async function getComponents(req, res, next) {
         res.status(200).json(result)
     }
     catch(e) {
-        res.status(400).json('Unsuccessful loading of component\'s list please try again later ')
+        let error = new UserExceptionError(400, 'Unsuccessful loading of component\'s list please try again later')
+        next(error)
     }
 }
 
@@ -47,12 +49,14 @@ async function uploadComponents(req, res, next) {
 
             res.status(200).json(updateResult)
         } catch(e) {
-            res.status(404).json('Unsuccessful import please try again later')
+            let error = new UserExceptionError(404, 'Unsuccessful import please try again later')
+            next(error)
         }
 
     }
     catch(e) {
-        res.status(500).json('Don\'t forget to attach a file!')
+        let error = new UserExceptionError(500, 'Don\'t forget to attach a file!')
+        next(error)
     }
 }
 
@@ -63,7 +67,7 @@ async function updateSingleComponent(req, res, next) {
         res.status(200).json(result.modifiedCount)
     }
     catch(e) {
-        res.status(404).json('Something went wrong please try again later')
+        next(e)
     }
 }
 
@@ -79,7 +83,7 @@ async function updateTypes(req, res, next) {
         res.status(200).json(response)
     }
     catch(e) {
-        res.status(404).json(e.message)
+        next(e)
     }
 }
 
@@ -91,7 +95,7 @@ async function deleteType(req, res, next) {
         res.status(200).json(result)
     }
     catch(e) {
-        res.status(404).json(e.message)
+        next(e)
     }
 }
 
@@ -107,7 +111,7 @@ async function updateModels(req, res, next) {
         res.status(200).json(response)
     }
     catch(e) {
-        res.status(404).json(e.message)
+        next(e)
     }
 }
 
@@ -119,7 +123,7 @@ async function deleteModel(req, res, next) {
         res.status(200).json(result)
     }
     catch(e) {
-        res.status(404).json(e.message)
+        next(e)
     }
 }
 
