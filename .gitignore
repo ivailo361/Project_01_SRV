@@ -5,6 +5,7 @@
 /node_modules
 /.pnp
 .pnp.js
+/public/errorLogs.txt
 /zzzdocs
 /expressSRV/node_modules
 
