@@ -44,7 +44,7 @@ connectDB().then(() => {
         const { code, message } = err
         errorLog(message)
         res.status(code || 409).json(message);
-        console.log('*'.repeat(90))
+        console.log('*'.repeat(50))
     });
 
     app.listen(process.env.PORT || 3333, () => console.log(`Listening on port ${config.port}! Now its up to you...`));
