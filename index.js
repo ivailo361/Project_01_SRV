@@ -10,7 +10,7 @@ const errorLog = require('./models/errorHandler')
 // const credentials = {key: privateKey, cert: certificate};
 // const httpServer = http.createServer(app);
 // const httpsServer = https.createServer(credentials, app);
-console.log('IVO')
+console.log('Ivo is connected')
 
 const express = require('express');
 const app = express()
