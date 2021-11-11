@@ -23,7 +23,8 @@ const editRouter = require('./src/edit/routerEdit');
 connectDB().then(() => {
     console.log('connected')
 
-    app.use(cors({origin: process.env.EXR_CORS_ORIGIN || "http://localhost:3000"}));
+    app.use(cors());
+    // app.use(cors({origin: process.env.EXR_CORS_ORIGIN || "http://localhost:3000"}));
     // app.use((req, res, next) => {
     //     res.header('Access-Control-Allow-Origin', '*');
     //     next();
@@ -37,6 +38,7 @@ connectDB().then(() => {
 
     app.use('/api/stock', stockRouter);
     app.use('/api/edit', editRouter);
+    app.use('/stock', stockRouter);
     app.use('*', (req, res, next) => res.send('<h1> Something went wrong. Try again. :thumbsup: </h1>'))
 
     app.use(function (err, req, res, next) {
