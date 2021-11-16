@@ -23,8 +23,8 @@ const editRouter = require('./src/edit/routerEdit');
 connectDB().then(() => {
     console.log('connected')
 
-    app.use(cors());
-    // app.use(cors({origin: process.env.EXR_CORS_ORIGIN || "http://localhost:3000"}));
+    // app.use(cors());
+    app.use(cors({origin: process.env.EXR_CORS_ORIGIN || "https://also.ivmar.site"}));
     // app.use((req, res, next) => {
     //     res.header('Access-Control-Allow-Origin', '*');
     //     next();
