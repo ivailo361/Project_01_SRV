@@ -13,7 +13,7 @@ async function connectDB() {
     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     const connect = await client.connect()
     const db = connect.db(config.db_name);
-    return { connect, db}
+    return { connect, db }
 }
 
 

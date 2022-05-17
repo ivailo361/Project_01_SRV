@@ -23,13 +23,16 @@ const editRouter = require('./src/edit/routerEdit');
 connectDB().then(() => {
     console.log('connected')
 
-    // app.use(cors());
-    app.use(cors({origin: process.env.EXR_CORS_ORIGIN || "https://also.ivmar.site"}));
-    // app.use((req, res, next) => {
-    //     res.header('Access-Control-Allow-Origin', '*');
-    //     next();
-    //   });
-    // {origin: "http://localhost:3000", allowedHeaders: ['Content-Type', 'Auth']}
+    // app.use(cors({ origin: "*" }))
+    // app.use(cors({ origin: process.env.EXR_CORS_ORIGIN || "http://172.168.1.88:9000" }));
+    app.use((req, res, next) => {
+        res.header('Access-Control-Allow-Origin', '*');
+        next();
+    });
+    app.use(cors({
+        origin: ["https://also.ivmar.site:8443", "http://172.168.1.88:9000"]
+    }));
+    // app.use(cors({ origin: "https://aslo.ivmar.site:8443", allowedHeaders: ['Content-Type', 'Auth'] }))
 
     app.use(express.json())
     // app.use(express.urlencoded({ extended: true }))
